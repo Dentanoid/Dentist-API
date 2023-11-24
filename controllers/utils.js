@@ -22,6 +22,13 @@ present in responseMap the received message is sent.*/
 client.on("message", (topic, message) => {
     try {
         const messageJson = JSON.parse(message.toString());
+
+        console.log("********************************")
+        console.log("Utils.js:")
+        console.log("Message: " + messageJson)
+        console.log("Topic: " + topic)
+        console.log("********************************")
+
         console.log(messageJson) //
         if (messageJson.hasOwnProperty("requestID")) {
             const res = responseMap.get(messageJson.requestID)

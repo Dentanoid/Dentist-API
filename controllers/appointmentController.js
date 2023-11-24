@@ -20,11 +20,20 @@ async function createAppointment(req, res, next) {
             end_time: end_time
         })
 
+        console.log("********************************")
+        console.log("appointmentController.js --> createAppointment()")
         console.log(publishMessage)
+        console.log("********************************")
+        res.status(201).json(publishMessage)
 
+        /*
+        TODO 1: This API needs to use MQTT to publish message to microservices:
         responseMap.set(uuid, res);
         client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
         mqttTimeout(uuid, 10000)
+
+        TODO 2: Microservices publishes response back to API
+        */
     }
     catch (err) {
         responseMap.delete(uuid);

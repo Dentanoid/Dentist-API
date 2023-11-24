@@ -3,9 +3,9 @@ const router = express.Router();
 const { createAppointment, cancelAppointment } = require('../controllers/appointmentController');
 
 /* POST appointment using a patientID and appointmentID*/
-router.post('/', createAppointment);
+router.post('/availabletimes', createAppointment);
 
 /* DELETE appointment using a appointmentID*/
-router.post('/:appointmentID', cancelAppointment);
+router.post('/appointments', cancelAppointment);
 
 module.exports = router;

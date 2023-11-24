@@ -23,7 +23,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(cors({ origin: ['http://localhost:8080'], }))
 
 app.use('/', indexRouter);
-app.use('/appointments', appointmentsRouter);
+app.use('/', appointmentsRouter); // '/appointments'
 app.use('/clinics', clinicsRouter)
 
 // catch 404 and forward to error handler

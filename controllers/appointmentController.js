@@ -73,8 +73,12 @@ async function cancelAppointment(req, res, next) {
     }
 }
 
-// TODO: Migrate this function to clinicController.js once problem is solved
-async function registerClinicTemp(req, res, next) { // NOTE: Will be refactored to the corred file once issue is solved
+
+// -----------------------------------------------------------------------------------------
+// The methods below will be refactored to clinicController.js onc to clinicController.js once the /view issue is solved
+
+
+async function registerClinicTemp(req, res, next) {
     if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
 
     const uuid = uuidv4();
@@ -93,7 +97,68 @@ async function registerClinicTemp(req, res, next) { // NOTE: Will be refactored 
         })
 
         console.log("********************************")
-        console.log("clinicController.js --> registerClinic()")
+        console.log(publishMessage)
+        console.log("********************************")
+
+        responseMap.set(uuid, res);
+        client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
+        // mqttTimeout(uuid, 10000)
+        res.status(201).json(publishMessage) // TODO: Wait for response using Parallel Programming
+    }
+    catch (err) {
+        responseMap.delete(uuid);
+        next(err)
+    }
+}
+
+async function addDentistTemp(req, res, next) {
+    if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
+
+    const uuid = uuidv4();
+    try {
+        const clinic_name = req.body.clinic_name;
+        const clinic_id = req.body.clinic_id;
+        const employee_name = req.body.employee_name;
+
+        const publishTopic = "sub/dental/clinic/dentist/add"
+        const publishMessage = JSON.stringify({
+            clinic_name: clinic_name,
+            clinic_id: clinic_id,
+            employee_name: employee_name
+        })
+
+        console.log("********************************")
+        console.log(publishMessage)
+        console.log("********************************")
+
+        responseMap.set(uuid, res);
+        client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
+        // mqttTimeout(uuid, 10000)
+        res.status(201).json(publishMessage) // TODO: Wait for response using Parallel Programming
+    }
+    catch (err) {
+        responseMap.delete(uuid);
+        next(err)
+    }
+}
+
+async function removeDentistTemp(req, res, next) {
+    if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
+
+    const uuid = uuidv4();
+    try {
+        const clinic_name = req.body.clinic_name;
+        const clinic_id = req.body.clinic_id;
+        const employee_name = req.body.employee_name;
+
+        const publishTopic = "sub/dental/clinic/dentist/remove"
+        const publishMessage = JSON.stringify({
+            clinic_name: clinic_name,
+            clinic_id: clinic_id,
+            employee_name: employee_name
+        })
+
+        console.log("********************************")
         console.log(publishMessage)
         console.log("********************************")
 
@@ -111,5 +176,7 @@ async function registerClinicTemp(req, res, next) { // NOTE: Will be refactored 
 module.exports = {
     createAppointment,
     cancelAppointment,
-    registerClinicTemp
+    registerClinicTemp,
+    addDentistTemp,
+    removeDentistTemp
 };

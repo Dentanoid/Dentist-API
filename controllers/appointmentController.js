@@ -1,182 +1,104 @@
 const { v4: uuidv4 } = require('uuid');
-const { mqttTimeout, responseMap, client } = require("./utils");
-const { json } = require('express');
+const { mqttTimeout, responseMap, client } = require("./utils")
 
-// Create DB-instance in AppointmentService 'AvailableTime'
-async function createAppointment(req, res, next) {
+
+/* GET appointments/users/:patientID' 
+gets appointments with matching patientID. */
+async function getUsersAppointments(req, res, next) {
     if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
 
     const uuid = uuidv4();
     try {
+        const patientID = req.params.patientID;
+        const publishTopic = "grp20/req/appointments/get";
+
+        responseMap.set(uuid, res);
+        client.publish(publishTopic, JSON.stringify({
+            patientID: patientID,
+            requestID: uuid
+        }), (err) => { if (err) { next(err) } });
+        mqttTimeout(uuid, 10000)
+    }
+    catch (err) {
+        responseMap.delete(uuid);
+        next(err);
+    }
+}
+/* POST appointments/ 
+Create appointment using a patientID and timeslotID*/
+async function createAppointment(req, res, next) {
+    if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
+    console.log('create appointment')
+
+    const uuid = uuidv4();
+    try {
+        /*
+        // REFACTORED VERSION (Will be used once the group has agreed on the exact payload-attributes)
+        const timeslotID = req.body.timeslotID;
+        const patientID = req.body.patientID;
+        */
+        const publishTopic = "sub/dentist/availabletimes/create"     
+
         const clinic_id = req.body.clinic_id;
         const dentist_id = req.body.dentist_id;
         const start_time = req.body.start_time;
         const end_time = req.body.end_time;
 
-        const publishTopic = "sub/dentist/availabletimes/create"
-        const publishMessage = JSON.stringify({
+        responseMap.set(uuid, res);
+        client.publish(publishTopic, JSON.stringify({
             clinic_id: clinic_id,
             dentist_id: dentist_id,
             start_time: start_time,
             end_time: end_time
-        })
 
-        console.log("********************************")
-        console.log("appointmentController.js --> createAppointment()")
-        console.log(publishMessage)
-        console.log("********************************")
-
-        responseMap.set(uuid, res);
-        client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
+        }), (err) => { if (err) { next(err) } });
         // mqttTimeout(uuid, 10000)
-        res.status(201).json(publishMessage)
+        res.status(201).json('temp')
     }
     catch (err) {
         responseMap.delete(uuid);
         next(err)
     }
 }
-
-// Delete DB-instance in AppointmentService 'Appointments'
+/* DELETE appointments/:appointmentID 
+DELETE appointment using an appointmentID*/
 async function cancelAppointment(req, res, next) {
     if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
 
     const uuid = uuidv4();
     try {
+        /*
+        // REFACTORED VERSION (Will be used once the group has agreed on the exact payload-attributes)
+        const appointmentID = req.params.appointmentID;
+        console.log(appointmentID)
+        */
+
+        const publishTopic = "sub/dentist/delete"
+
+        // TEMP VERSION
         const clinic_id = req.body.clinic_id;
         const dentist_id = req.body.dentist_id;
         const start_time = req.body.start_time;
         const end_time = req.body.end_time;
-
-        const publishTopic = "sub/dentist/delete"
-        const publishMessage = JSON.stringify({
+        
+        responseMap.set(uuid, res);
+        client.publish(publishTopic, JSON.stringify({
             clinic_id: clinic_id,
             dentist_id: dentist_id,
             start_time: start_time,
             end_time: end_time
-        })
 
-        console.log("********************************")
-        console.log("appointmentController.js --> cancelAppointment()")
-        console.log(publishMessage)
-        console.log("********************************")
-        
-        responseMap.set(uuid, res);
-        client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
-        res.status(201).json(publishMessage)
-
+        }), (err) => { if (err) { next(err) } });
         // mqttTimeout(uuid, 10000)
+        res.status(200).json('temp')
     }
     catch (err) {
         responseMap.delete(uuid);
         next(err)
     }
 }
-
-
-// -----------------------------------------------------------------------------------------
-// The methods below will be refactored to clinicController.js onc to clinicController.js once the /view issue is solved
-
-
-async function registerClinicTemp(req, res, next) {
-    if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
-
-    const uuid = uuidv4();
-    try {
-        const clinic_name = req.body.clinic_name;
-        const clinic_id = req.body.clinic_id;
-        const location = req.body.location;
-        const employees = req.body.employees;
-
-        const publishTopic = "sub/dental/clinic/register"
-        const publishMessage = JSON.stringify({
-            clinic_name: clinic_name,
-            clinic_id: clinic_id,
-            location: location,
-            employees: employees
-        })
-
-        console.log("********************************")
-        console.log(publishMessage)
-        console.log("********************************")
-
-        responseMap.set(uuid, res);
-        client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
-        // mqttTimeout(uuid, 10000)
-        res.status(201).json(publishMessage) // TODO: Wait for response using Parallel Programming
-    }
-    catch (err) {
-        responseMap.delete(uuid);
-        next(err)
-    }
-}
-
-async function addDentistTemp(req, res, next) {
-    if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
-
-    const uuid = uuidv4();
-    try {
-        const clinic_name = req.body.clinic_name;
-        const clinic_id = req.body.clinic_id;
-        const employee_name = req.body.employee_name;
-
-        const publishTopic = "sub/dental/clinic/dentist/add"
-        const publishMessage = JSON.stringify({
-            clinic_name: clinic_name,
-            clinic_id: clinic_id,
-            employee_name: employee_name
-        })
-
-        console.log("********************************")
-        console.log(publishMessage)
-        console.log("********************************")
-
-        responseMap.set(uuid, res);
-        client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
-        // mqttTimeout(uuid, 10000)
-        res.status(201).json(publishMessage) // TODO: Wait for response using Parallel Programming
-    }
-    catch (err) {
-        responseMap.delete(uuid);
-        next(err)
-    }
-}
-
-async function removeDentistTemp(req, res, next) {
-    if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }
-
-    const uuid = uuidv4();
-    try {
-        const clinic_name = req.body.clinic_name;
-        const clinic_id = req.body.clinic_id;
-        const employee_name = req.body.employee_name;
-
-        const publishTopic = "sub/dental/clinic/dentist/remove"
-        const publishMessage = JSON.stringify({
-            clinic_name: clinic_name,
-            clinic_id: clinic_id,
-            employee_name: employee_name
-        })
-
-        console.log("********************************")
-        console.log(publishMessage)
-        console.log("********************************")
-
-        responseMap.set(uuid, res);
-        client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
-        // mqttTimeout(uuid, 10000)
-        res.status(201).json(publishMessage) // TODO: Wait for response using Parallel Programming
-    }
-    catch (err) {
-        responseMap.delete(uuid);
-        next(err)
-    }
-}
-
 module.exports = {
+    getUsersAppointments,
     createAppointment,
-    cancelAppointment,
-    registerClinicTemp,
-    addDentistTemp,
-    removeDentistTemp
+    cancelAppointment
 };

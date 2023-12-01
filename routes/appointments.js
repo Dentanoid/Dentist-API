@@ -1,17 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { createAppointment, cancelAppointment, registerClinicTemp, addDentistTemp, removeDentistTemp } = require('../controllers/appointmentController');
+const { getUsersAppointments, createAppointment, cancelAppointment } = require('../controllers/appointmentController');
+
+/* GET appointments with matching patientID. */
+router.get('/users/:patientID', getUsersAppointments);
 
 /* POST appointment using a patientID and appointmentID*/
-router.post('/availabletimes', createAppointment);
+router.post('/', createAppointment);
 
 /* DELETE appointment using a appointmentID*/
-router.post('/appointments', cancelAppointment);
-
-router.post('/clinics', registerClinicTemp);
-
-router.post('/clinics/add', addDentistTemp);
-
-router.post('/clinics/remove', removeDentistTemp);
+// router.delete('/:appointmentID', cancelAppointment); // <--- Refactored version
+router.post('/removeTEMP', cancelAppointment); // <--- TEMP version
 
 module.exports = router;

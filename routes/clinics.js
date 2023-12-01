@@ -1,8 +1,11 @@
 const express = require('express');
 const router = express.Router();
-const { getDentistTimeslots } = require('../controllers/clinicController.js');
+const { registerClinic, addDentist, removeDentist } = require('../controllers/clinicController');
 
-/* GET timeslots with matching dentist ID.*/
-router.get('/dentists/:dentistID', getDentistTimeslots);
+router.post('/', registerClinic);
+router.post('/dentists', addDentist);
+
+// router.remove('/dentists/:dentistID', removeDentist); // <--- REFACTORED Version
+router.post('/removeTEMP', removeDentist); // <--- TEMP Version
 
 module.exports = router;

@@ -3,8 +3,8 @@ const mqttOptions = {
     host: 'broker.hivemq.com',
     port: '1883',
     protocol: 'tcp',
-    username: 'GG',
-    password: 'g'
+    username: 'MyUser',
+    password: 'MyPassword'
 };
 const client = mqtt.connect(mqttOptions);
 
@@ -12,8 +12,10 @@ const client = mqtt.connect(mqttOptions);
 const responseMap = new Map();
 
 const subscribeTopics = [
-    "grp20/res/appointments/patientAPI",
-    "grp20/res/clinics/patientAPI"
+    "grp20/res/appointments/+",
+    "grp20/res/timeSlots/+",
+    "grp20/res/dentists/+",
+    "grp20/res/patients/+"
 ];
 
 
@@ -22,11 +24,17 @@ present in responseMap the received message is sent.*/
 client.on("message", (topic, message) => {
     try {
         const messageJson = JSON.parse(message.toString());
-        console.log(messageJson) //
         if (messageJson.hasOwnProperty("requestID")) {
             const res = responseMap.get(messageJson.requestID)
+
             if (res) {
-                res.json(messageJson);
+                //Checks if the message contains a status code
+                if (messageJson.hasOwnProperty("status")) {
+                    //Sends response with the provided status code & error message
+                    res.status(parseInt(messageJson.status)).json({ error: messageJson.error, })
+                } else {
+                    res.json(messageJson);
+                }
                 responseMap.delete(messageJson.requestID);
             } else { console.error("Response object not found for requestID: " + messageJson.requestID) }
         }
@@ -63,6 +71,7 @@ async function mqttTimeout(uuid, time) {
 
     }, time)
 };
+
 module.exports = {
     mqttTimeout,
     client,

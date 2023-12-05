@@ -8,6 +8,7 @@ const cors = require('cors')
 var indexRouter = require('./routes/index');
 var appointmentsRouter = require('./routes/appointments');
 var clinicsRouter = require('./routes/clinics')
+var usersRouter = require('./routes/users')
 
 var app = express();
 
@@ -20,11 +21,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-app.use(cors({ origin: ['http://localhost:8081'], }))
+app.use(cors({ origin: [`http://localhost:8081`], }))
 
 app.use('/', indexRouter);
 app.use('/appointments', appointmentsRouter);
 app.use('/clinics', clinicsRouter)
+app.use('/users', usersRouter)
+
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

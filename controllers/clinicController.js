@@ -1,5 +1,5 @@
 const {v4: uuidv4} = require('uuid');
-const {mqttTimeout, responseMap, client} = require("./utils")
+const {responseMap, client} = require("./utils")
 
 async function registerClinic(req, res, next) {
     if (!client.connected) { return res.status(502).json({ error: "MQTT client not connected" }) }

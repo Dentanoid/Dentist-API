@@ -23,6 +23,7 @@ const subscribeTopics = [
 present in responseMap the received message is sent.*/
 client.on("message", (topic, message) => {
     try {
+        console.log(message)
         const messageJson = JSON.parse(message.toString());
         if (messageJson.hasOwnProperty("requestID")) {
             const res = responseMap.get(messageJson.requestID)

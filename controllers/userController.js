@@ -34,17 +34,18 @@ async function register(req, res, next) {
         const timeslotID = req.body.timeslotID;
         const patientID = req.body.patientID;
         */
-        const publishTopic = "grp20/req/dentist/create"
+        const publishTopic = "grp20/req/dentists/create"
 
         const username = req.body.username;
         const password = req.body.password;
-        const clinic = req.body.clinic;
 
         client.publish(publishTopic, JSON.stringify({
+            requestID: req.requestID,
             username,
             password,
-            clinic,
-        }), (err) => { if (err) { next(err) } });
+        }), (err) => { 
+            if (err) { next(err) } 
+        });
 
     }
     catch (err) {

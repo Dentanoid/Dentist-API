@@ -7,6 +7,7 @@ function handleQueue(req, res, next) {
     req.requestID = uuid;
     responseMap.set(uuid, res)
     mqttTimeout(uuid, 10000)
+    next()
 }
 
 module.exports = {

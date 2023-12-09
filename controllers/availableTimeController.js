@@ -20,7 +20,7 @@ async function getUsersAppointments(req, res, next) {
 }
 /* POST appointments/ 
 Create appointment using a patientID and timeslotID*/
-async function createAppointment(req, res, next) {
+async function createAvailableTime(req, res, next) {
 
     try {
         /*
@@ -28,19 +28,19 @@ async function createAppointment(req, res, next) {
         const timeslotID = req.body.timeslotID;
         const patientID = req.body.patientID;
         */
-        const publishTopic = "sub/dentist/availabletimes/create"     
+        const publishTopic = "grp20/req/availabletimes/create"     
 
-        const clinic_id = req.body.clinic_id;
+        // const clinic_id = req.body.clinic_id;
         const dentist_id = req.body.dentist_id;
         const start_time = req.body.start_time;
         const end_time = req.body.end_time;
 
         client.publish(publishTopic, JSON.stringify({
-            clinic_id: clinic_id,
-            dentist_id: dentist_id,
-            start_time: start_time,
-            end_time: end_time
-
+            // clinic_id: clinic_id,
+            Dentist_id: dentist_id,
+            Start_time: start_time,
+            End_time: end_time,
+            requestID: req.requestID
         }), (err) => { if (err) { next(err) } });
         // mqttTimeout(uuid, 10000)
     }
@@ -50,29 +50,21 @@ async function createAppointment(req, res, next) {
 }
 /* DELETE appointments/:appointmentID 
 DELETE appointment using an appointmentID*/
-async function cancelAppointment(req, res, next) {
+async function deleteAvailableTime(req, res, next) {
 
     try {
-        /*
-        // REFACTORED VERSION (Will be used once the group has agreed on the exact payload-attributes)
-        const appointmentID = req.params.appointmentID;
-        console.log(appointmentID)
-        */
+        const { id } = req.params;
+        const publishTopic = "grp20/req/availabletimes/delete"
 
-        const publishTopic = "sub/dentist/delete"
-
-        // TEMP VERSION
-        const clinic_id = req.body.clinic_id;
-        const dentist_id = req.body.dentist_id;
-        const start_time = req.body.start_time;
-        const end_time = req.body.end_time;
+        // // TEMP VERSION
+        // const clinic_id = req.body.clinic_id;
+        // const dentist_id = req.body.dentist_id;
+        // const start_time = req.body.start_time;
+        // const end_time = req.body.end_time;
         
         client.publish(publishTopic, JSON.stringify({
-            clinic_id: clinic_id,
-            dentist_id: dentist_id,
-            start_time: start_time,
-            end_time: end_time
-
+           requestID: req.requestID,
+           ID: id
         }), (err) => { if (err) { next(err) } });
         // mqttTimeout(uuid, 10000)
     }
@@ -82,6 +74,6 @@ async function cancelAppointment(req, res, next) {
 }
 module.exports = {
     getUsersAppointments,
-    createAppointment,
-    cancelAppointment
+    createAvailableTime,
+    deleteAvailableTime
 };

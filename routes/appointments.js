@@ -1,15 +1,15 @@
 const express = require('express');
 const router = express.Router();
-const { getUsersAppointments, createAppointment, cancelAppointment } = require('../controllers/appointmentController');
+const { getUsersAppointments, createAvailableTime, deleteAvailableTime } = require('../controllers/appointmentController');
 
 /* GET appointments with matching patientID. */
 router.get('/users/:patientID', getUsersAppointments);
 
 /* POST appointment using a patientID and appointmentID*/
-router.post('/', createAppointment);
+router.post('/', createAvailableTime);
 
 /* DELETE appointment using a appointmentID*/
 // router.delete('/:appointmentID', cancelAppointment); // <--- Refactored version
-router.post('/removeTEMP', cancelAppointment); // <--- TEMP version
+router.delete('/:id', deleteAvailableTime);
 
 module.exports = router;

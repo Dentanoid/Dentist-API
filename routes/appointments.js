@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUsersAppointments, createAvailableTime, deleteAvailableTime } = require('../controllers/appointmentController');
+const { getUsersAppointments, createAvailableTime, deleteAvailableTime } = require('../controllers/availableTimeController');
 
 /* GET appointments with matching patientID. */
 router.get('/users/:patientID', getUsersAppointments);

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const { getUsersAppointments, createAvailableTime, deleteAvailableTime } = require('../controllers/availableTimeController');
+const { getUsersAppointments, createAvailableTime, deleteAvailableTime, getAllTimeSlots } = require('../controllers/availableTimeController');
 
 /* GET appointments with matching patientID. */
 router.get('/users/:patientID', getUsersAppointments);
@@ -12,4 +12,6 @@ router.post('/', createAvailableTime);
 // router.delete('/:appointmentID', cancelAppointment); // <--- Refactored version
 router.delete('/:id', deleteAvailableTime);
 
+/* GET all free and booked time slots pretaining to a dentist */
+router.get('/:dentistID/all', getAllTimeSlots)
 module.exports = router;

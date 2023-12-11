@@ -13,9 +13,9 @@ const responseMap = new Map();
 
 const subscribeTopics = [
     "grp20/res/appointments/+",
-    "grp20/res/timeSlots/+",
+    "grp20/res/availabletimes/+",
     "grp20/res/dentists/+",
-    "grp20/res/patients/+"
+    "grp20/res/patients/+",
 ];
 
 
@@ -24,6 +24,7 @@ present in responseMap the received message is sent.*/
 client.on("message", (topic, message) => {
     try {
         const messageJson = JSON.parse(message.toString());
+        console.log(messageJson)
         if (messageJson.hasOwnProperty("requestID")) {
             const res = responseMap.get(messageJson.requestID)
 
@@ -31,7 +32,7 @@ client.on("message", (topic, message) => {
                 //Checks if the message contains a status code
                 if (messageJson.hasOwnProperty("status")) {
                     //Sends response with the provided status code & error message
-                    res.status(parseInt(messageJson.status)).json({ error: messageJson.error, })
+                    res.status(parseInt(messageJson.status)).json(messageJson)
                 } else {
                     res.json(messageJson);
                 }

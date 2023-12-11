@@ -11,7 +11,7 @@ async function getUsersAppointments(req, res, next) {
 
         client.publish(publishTopic, JSON.stringify({
             patientID: patientID,
-            requestID: req.requestID 
+            requestID: req.requestID
         }), (err) => { if (err) { next(err) } });
     }
     catch (err) {
@@ -23,12 +23,8 @@ Create appointment using a patientID and timeslotID*/
 async function createAvailableTime(req, res, next) {
 
     try {
-        /*
-        // REFACTORED VERSION (Will be used once the group has agreed on the exact payload-attributes)
-        const timeslotID = req.body.timeslotID;
-        const patientID = req.body.patientID;
-        */
-        const publishTopic = "grp20/req/availabletimes/create"     
+        
+        const publishTopic = "grp20/req/availabletimes/create"
 
         // const clinic_id = req.body.clinic_id;
         const dentist_id = req.body.dentist_id;
@@ -37,7 +33,7 @@ async function createAvailableTime(req, res, next) {
 
         client.publish(publishTopic, JSON.stringify({
             // clinic_id: clinic_id,
-            Dentist_id: dentist_id,
+            dentist_id,
             Start_time: start_time,
             End_time: end_time,
             requestID: req.requestID
@@ -48,6 +44,19 @@ async function createAvailableTime(req, res, next) {
         next(err)
     }
 }
+async function getAllTimeSlots(req, res, next) {
+    try {
+        const { dentistID } = req.params;
+        const publishTopic = "grp20/req/timeslots/get"
+        client.publish(publishTopic, JSON.stringify({
+            Dentist_id: dentistID,
+            requestID: req.requestID
+        }))
+    }
+    catch(err) {
+        next(err)
+    }
+}
 /* DELETE appointments/:appointmentID 
 DELETE appointment using an appointmentID*/
 async function deleteAvailableTime(req, res, next) {
@@ -55,18 +64,10 @@ async function deleteAvailableTime(req, res, next) {
     try {
         const { id } = req.params;
         const publishTopic = "grp20/req/availabletimes/delete"
-
-        // // TEMP VERSION
-        // const clinic_id = req.body.clinic_id;
-        // const dentist_id = req.body.dentist_id;
-        // const start_time = req.body.start_time;
-        // const end_time = req.body.end_time;
-        
         client.publish(publishTopic, JSON.stringify({
-           requestID: req.requestID,
-           ID: id
+            requestID: req.requestID,
+            ID: id
         }), (err) => { if (err) { next(err) } });
-        // mqttTimeout(uuid, 10000)
     }
     catch (err) {
         next(err)
@@ -75,5 +76,6 @@ async function deleteAvailableTime(req, res, next) {
 module.exports = {
     getUsersAppointments,
     createAvailableTime,
-    deleteAvailableTime
+    deleteAvailableTime,
+    getAllTimeSlots
 };

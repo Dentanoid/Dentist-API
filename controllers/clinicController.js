@@ -10,6 +10,7 @@ async function registerClinic(req, res, next) {
 
         const publishTopic = "sub/dental/clinic/register"
         const publishMessage = JSON.stringify({
+            requestID: req.requestID,
             clinic_name: clinic_name,
             clinic_id: clinic_id,
             position: position,
@@ -17,7 +18,6 @@ async function registerClinic(req, res, next) {
         })
 
         client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
-        // mqttTimeout(uuid, 10000)
     }
     catch (err) {
         next(err)
@@ -32,6 +32,7 @@ async function addDentist(req, res, next) {
 
         const publishTopic = "sub/dental/clinic/dentist/add"
         const publishMessage = JSON.stringify({
+            requestID: req.requestID,
             clinic_name: clinic_name,
             clinic_id: clinic_id,
             employee_name: employee_name
@@ -53,6 +54,7 @@ async function removeDentist(req, res, next) {
 
         const publishTopic = "sub/dental/clinic/dentist/remove"
         const publishMessage = JSON.stringify({
+            requestID: req.requestID,
             clinic_name: clinic_name,
             clinic_id: clinic_id,
             employee_name: employee_name
@@ -65,8 +67,22 @@ async function removeDentist(req, res, next) {
     }
 }
 
+async function getClinics(req, res, next) {
+    try {
+        const publishTopic = "sub/dental/clinic/all"
+        const publishMessage = JSON.stringify({
+            requestID: req.requestID
+        })
+        client.publish(publishTopic, publishMessage, (err) => { if (err) { next(err) } });
+    }
+    catch (err) {
+        next(err)
+    }
+}
+
 module.exports = {
     registerClinic,
     addDentist,
-    removeDentist
+    removeDentist,
+    getClinics
 };

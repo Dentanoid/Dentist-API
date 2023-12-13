@@ -69,7 +69,7 @@ async function removeDentist(req, res, next) {
 
 async function getClinics(req, res, next) {
     try {
-        const publishTopic = "sub/dental/clinic/all"
+        const publishTopic = "grp20/req/dental/clinic/all"
         const publishMessage = JSON.stringify({
             requestID: req.requestID
         })

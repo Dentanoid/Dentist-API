@@ -18,6 +18,7 @@ const subscribeTopics = [
     "grp20/res/patients/+",
     "grp20/res/timeslots/+",
     "grp20/res/clinics/+",
+    "grp20/res/dental/clinics/+"
 ]
 
 /*Handles received messages, if received message contains a requestID 

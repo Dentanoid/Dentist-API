@@ -66,7 +66,7 @@ async function deleteAvailableTime(req, res, next) {
         const publishTopic = "grp20/req/timeslots/delete"
         client.publish(publishTopic, JSON.stringify({
             requestID: req.requestID,
-            ID: id
+            _id: id
         }), (err) => { if (err) { next(err) } });
     }
     catch (err) {

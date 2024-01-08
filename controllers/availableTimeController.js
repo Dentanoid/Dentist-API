@@ -26,13 +26,13 @@ async function createAvailableTime(req, res, next) {
         
         const publishTopic = "grp20/req/availabletimes/create"
 
-        // const clinic_id = req.body.clinic_id;
+        const clinic_id = req.body.clinic_id;
         const dentist_id = req.body.dentist_id;
         const start_time = req.body.start_time;
         const end_time = req.body.end_time;
 
         client.publish(publishTopic, JSON.stringify({
-            // clinic_id: clinic_id,
+            clinic_id: clinic_id,
             dentist_id,
             Start_time: start_time,
             End_time: end_time,
@@ -63,10 +63,10 @@ async function deleteAvailableTime(req, res, next) {
 
     try {
         const { id } = req.params;
-        const publishTopic = "grp20/req/availabletimes/delete"
+        const publishTopic = "grp20/req/timeslots/delete"
         client.publish(publishTopic, JSON.stringify({
             requestID: req.requestID,
-            ID: id
+            _id: id
         }), (err) => { if (err) { next(err) } });
     }
     catch (err) {

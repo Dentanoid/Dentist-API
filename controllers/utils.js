@@ -16,16 +16,16 @@ const subscribeTopics = [
     "grp20/res/availabletimes/+",
     "grp20/res/dentists/+",
     "grp20/res/patients/+",
-    "grp20/res/timeslots/+"]
-
-
+    "grp20/res/timeslots/+",
+    "grp20/res/clinics/+",
+    "grp20/res/dental/clinics/+"
+]
 
 /*Handles received messages, if received message contains a requestID 
 present in responseMap the received message is sent.*/
 client.on("message", (topic, message) => {
     try {
         const messageJson = JSON.parse(message.toString());
-        console.log(messageJson)
         if (messageJson.hasOwnProperty("requestID")) {
             const res = responseMap.get(messageJson.requestID)
 

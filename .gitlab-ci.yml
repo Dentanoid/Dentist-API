@@ -25,6 +25,8 @@ test:
     - npm run ci-test
 
 deploy:
+  only:
+    - main
   image: ruby:3.3.0
   tags:
     - docker

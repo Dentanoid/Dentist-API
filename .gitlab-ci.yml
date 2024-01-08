@@ -8,6 +8,7 @@ cache:
 stages:
   - build
   - test
+  - deploy
 
 build:
   stage: build
@@ -22,3 +23,12 @@ test:
     - docker
   script:
     - npm run ci-test
+
+deploy:
+  stage: deploy
+  tags:
+    - docker
+  script:
+    - gem install dpl
+    - dpl --provider=heroku --app=$HEROKU_APP_NAME --api-key=$HEROKU_PRODUCTION_KEY
+

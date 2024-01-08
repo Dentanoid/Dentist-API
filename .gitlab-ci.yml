@@ -25,6 +25,7 @@ test:
     - npm run ci-test
 
 deploy:
+  image: ruby:alpine
   stage: deploy
   tags:
     - docker

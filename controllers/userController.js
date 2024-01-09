@@ -32,11 +32,13 @@ async function register(req, res, next) {
 
         const username = req.body.username;
         const password = req.body.password;
+        const email = req.body.email;
 
         client.publish(publishTopic, JSON.stringify({
             requestID: req.requestID,
             username,
             password,
+            email
         }), (err) => { 
             if (err) { next(err) } 
         });
